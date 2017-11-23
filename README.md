@@ -20,4 +20,10 @@ tensorboard --logdir runs
 
 ## Screenshots
 
-Coming soon..
+### Loss and accuracy
+
+<img src="screenshots/scalars_loss_accuracy.png" />
+
+### Model architecture
+
+<img src="screenshots/graphs_model.png" />
