@@ -27,3 +27,7 @@ tensorboard --logdir runs
 ### Model architecture
 
 <img src="screenshots/graphs_model.png" />
+
+## Licence
+
+[MIT License](LICENSE.txt)
