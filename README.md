@@ -28,6 +28,10 @@ tensorboard --logdir runs
 
 <img src="screenshots/graphs_model.png" />
 
+### Model parameters
+
+<img src="screenshots/histograms_params.png" />
+
 ## License
 
 [MIT License](LICENSE.txt)
