@@ -1,4 +1,4 @@
-# Example to use TensorBoard from Pytorch 
+# Example to use TensorBoard from PyTorch 
 
 This repository shows how to use TensorBoard from PyTorch with MNIST example. 
 
