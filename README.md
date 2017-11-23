@@ -8,7 +8,7 @@ This repository shows how to use TensorBoard from PyTorch with MNIST example.
 
 ```bash
 pip install -r requirements.txt
-python main.py
+python main.py # start streaming data to the TensorBoard while training the model
 ```
 
 ```bash
