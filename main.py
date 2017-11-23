@@ -1,12 +1,5 @@
 from __future__ import print_function
 import argparse
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torchvision import datasets, transforms
-from torch.autograd import Variable
-
 
 parser = argparse.ArgumentParser(description='Pytorch & tensorboard example with MNIST')
 parser.add_argument('--batch-size', type=int, default=64, metavar='N',
@@ -24,8 +17,31 @@ parser.add_argument('--no-cuda', action='store_true', default=False,
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                    help='how many batches to wait before logging training status')
+                    help='how many batches to wait before logging training status (default: 10)')
+parser.add_argument('--log-dir', default=None, metavar='LD',
+                    help='directory to output TensorBoard event file (default: runs/<DATETIME>)')
 args = parser.parse_args()
+
+
+# Setup TensorBoardX summary writer
+from tensorboardX import SummaryWriter
+from datetime import datetime
+import os
+
+if args.log_dir is None:
+    args.log_dir = os.path.join('runs', datetime.now().strftime('%b%d_%H-%M-%S'))
+writer = SummaryWriter(log_dir=args.log_dir)
+
+
+# Import moddules for PyTorch
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torchvision import datasets, transforms
+from torch.autograd import Variable
+
+# Check CUDA/GPU availability
 args.cuda = not args.no_cuda and torch.cuda.is_available()
 
 # Initialize the random seed
@@ -113,8 +129,12 @@ def train(epoch):
                 100. * batch_idx / len(train_loader), loss.data[0] )
             )
 
+            # Log train/loss to TensorBoard
+            n_iter = (epoch - 1) * len(train_loader) + batch_idx + 1
+            writer.add_scalar('train/loss', loss.data[0], n_iter)
+
 # Testing
-def test():
+def test(epoch):
     model.eval()
     test_loss = 0
     correct = 0
@@ -130,12 +150,26 @@ def test():
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
 
     test_loss /= len(test_loader.dataset)
+    test_accuracy = 100. * correct / len(test_loader.dataset)
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.2f}%)\n'.format(
-        test_loss, correct, len(test_loader.dataset),
-        100. * correct / len(test_loader.dataset) )
+        test_loss, correct, len(test_loader.dataset), test_accuracy)
     )
 
-# Training loop
+    # Log test/loss and test/accuracy to TensorBoard
+    n_iter = epoch * len(train_loader)
+    writer.add_scalar('test/loss', test_loss, n_iter)
+    writer.add_scalar('test/accuracy', test_accuracy, n_iter)
+
+
+# Visualize network as a graph on TensorBoard
+res = model(torch.autograd.Variable(torch.Tensor(1,1,28,28), requires_grad=True))
+writer.add_graph(model, lastVar=res)
+
+
+# Start training
 for epoch in range(1, args.epochs + 1):
     train(epoch)
-    test()
+    test(epoch)
+
+# Close TensorBoardX summary writer
+writer.close()
