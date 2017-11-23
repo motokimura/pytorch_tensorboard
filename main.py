@@ -129,9 +129,15 @@ def train(epoch):
                 100. * batch_idx / len(train_loader), loss.data[0] )
             )
 
-            # Log train/loss to TensorBoard
+            # Log train/loss to TensorBoard at every iteration
             n_iter = (epoch - 1) * len(train_loader) + batch_idx + 1
             writer.add_scalar('train/loss', loss.data[0], n_iter)
+
+    # Log model parameters to TensorBoard at every epoch
+    for name, param in model.named_parameters():
+        layer, attr = os.path.splitext(name)
+        attr = attr[1:]
+        writer.add_histogram('{}/{}'.format(layer, attr), param.clone().cpu().data.numpy(), n_iter)
 
 # Testing
 def test(epoch):
@@ -155,7 +161,7 @@ def test(epoch):
         test_loss, correct, len(test_loader.dataset), test_accuracy)
     )
 
-    # Log test/loss and test/accuracy to TensorBoard
+    # Log test/loss and test/accuracy to TensorBoard at every epoch
     n_iter = epoch * len(train_loader)
     writer.add_scalar('test/loss', test_loss, n_iter)
     writer.add_scalar('test/accuracy', test_accuracy, n_iter)
