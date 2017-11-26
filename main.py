@@ -168,7 +168,10 @@ def test(epoch):
 
 
 # Visualize network as a graph on TensorBoard
-res = model(torch.autograd.Variable(torch.Tensor(1,1,28,28), requires_grad=True))
+input_tensor = torch.Tensor(1,1,28,28)
+if args.cuda:
+    input_tensor = input_tensor.cuda()
+res = model(Variable(input_tensor, requires_grad=True))
 writer.add_graph(model, lastVar=res)
 
 
