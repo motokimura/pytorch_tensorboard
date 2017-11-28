@@ -2,7 +2,7 @@
 
 This repository shows how to use TensorBoard from PyTorch with MNIST example. 
 
-[tensorboardX](https://github.com/lanpa/tensorboard-pytorch) module, a TensorBoard extension for PyTorch, is used for this.
+[tensorboard-pytorch (tensorboardX)](https://github.com/lanpa/tensorboard-pytorch), a TensorBoard extension for PyTorch, is used for this.
 
 ## Usage
 
